@@ -76,6 +76,7 @@ class MapView extends HTMLElement {
     map.setView(ll, zoom);
 
     marker.addTo(map).bindPopup(title ? url ? `<a href=${url}>${title}</a>` : title : "").openPopup();
+    map.scrollWheelZoom.disable();
   }
 }
 
