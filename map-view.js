@@ -1,5 +1,7 @@
 import L from "https://code4sabae.github.io/leaflet-mjs/leaflet.mjs";
 import { Geo3x3 } from "https://taisukef.github.io/Geo3x3/Geo3x3.mjs";
+import { LeafletSprite } from "https://taisukef.github.io/leaflet.sprite-es/src/sprite.js";
+LeafletSprite.init(L);
 
 const getMapLink = (ll) => {
   const link = "https://www.google.com/maps/dir/?api=1&destination=" + ll[0] + "," + ll[1];
@@ -10,7 +12,7 @@ class MapView extends HTMLElement {
   constructor () {
     super();
 
-    const grayscale = true; // this.getAttribute("grayscale");
+    const grayscale = this.getAttribute("grayscale");
 
     const link = document.createElement("link");
     link.rel = "stylesheet";
@@ -26,6 +28,7 @@ class MapView extends HTMLElement {
     const icon = this.getAttribute("icon");
     const iconsize = this.getAttribute("iconsize") || 30;
     const filter = this.getAttribute("filter")?.split(",");
+    const color = this.getAttribute("color");
     
     const map = L.map(div);
     // set 国土地理院地図 https://maps.gsi.go.jp/development/ichiran.html
@@ -69,6 +72,10 @@ class MapView extends HTMLElement {
         iconAnchor: [iconsize / 2, iconsize / 2],
         popupAnchor: [0, -iconsize / 2],
       });
+    } else if (color) {
+      if (LeafletSprite.colors.indexOf(color) >= 0) {
+        opt.icon = L.spriteIcon(color);
+      }
     }
     const marker = L.marker(ll, opt);
 
