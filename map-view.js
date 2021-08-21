@@ -31,6 +31,7 @@ class MapView extends HTMLElement {
     const color = this.getAttribute("color");
     
     const map = L.map(div);
+    this.map = map;
     // set 国土地理院地図 https://maps.gsi.go.jp/development/ichiran.html
     L.tileLayer("https://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png", {
       attribution: '<a href="https://maps.gsi.go.jp/development/ichiran.html">国土地理院</a>"',
