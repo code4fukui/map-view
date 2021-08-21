@@ -66,7 +66,7 @@ class MapView extends HTMLElement {
     map.setView(ll, zoom);
 
     const title = this.getAttribute("name");
-    if (!title) {
+    if (!title || title.length == 0) {
       return;
     }
     const url = this.getAttribute("url") || getMapLink(ll);
