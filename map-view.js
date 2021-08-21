@@ -62,7 +62,13 @@ class MapView extends HTMLElement {
     if (!ll) {
         return;
     }
+    const zoom = this.getAttribute("zoom") || 13;
+    map.setView(ll, zoom);
+
     const title = this.getAttribute("name");
+    if (!title) {
+      return;
+    }
     const url = this.getAttribute("url") || getMapLink(ll);
     const opt = { title };
     if (icon) {
@@ -79,10 +85,6 @@ class MapView extends HTMLElement {
       }
     }
     const marker = L.marker(ll, opt);
-
-    const zoom = this.getAttribute("zoom") || 13;
-    map.setView(ll, zoom);
-
     marker.addTo(map).bindPopup(title ? url ? `<a href=${url}>${title}</a>` : title : "").openPopup();
     map.scrollWheelZoom.disable();
   }
