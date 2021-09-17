@@ -18,18 +18,9 @@ class MapView extends HTMLElement {
     link.rel = "stylesheet";
     link.href = "https://code4sabae.github.io/leaflet-mjs/" + (grayscale ? "leaflet-grayscale.css" : "leaflet.css");
     this.appendChild(link);
-    link.onload = () => this.init();
-  }
-  async init () {
-    const div = document.createElement("div");
-    this.appendChild(div);
-    div.style.width = this.getAttribute("width") || "100%";
-    div.style.height = this.getAttribute("height") || "60vh";
-    const icon = this.getAttribute("icon");
-    const iconsize = this.getAttribute("iconsize") || 30;
-    const filter = this.getAttribute("filter")?.split(",");
-    const color = this.getAttribute("color");
-    
+    const div = this.div = document.createElement("div");
+    this.appendChild(this.div);
+
     const map = L.map(div);
     this.map = map;
     // set 国土地理院地図 https://maps.gsi.go.jp/development/ichiran.html
@@ -38,6 +29,17 @@ class MapView extends HTMLElement {
       maxZoom: 18,
     }).addTo(map);
 
+    link.onload = () => this.init();
+  }
+  async init () {
+    const div = this.div;
+    const map = this.map;
+    div.style.width = this.getAttribute("width") || "100%";
+    div.style.height = this.getAttribute("height") || "60vh";
+    const icon = this.getAttribute("icon");
+    const iconsize = this.getAttribute("iconsize") || 30;
+    const color = this.getAttribute("color");
+    
     const iconlayer = L.layerGroup();
     iconlayer.addTo(map);
 
@@ -59,34 +61,42 @@ class MapView extends HTMLElement {
       return null;
     };
     const ll = getLatLng();
-    if (!ll) {
-        return;
-    }
-    const zoom = this.getAttribute("zoom") || 13;
-    map.setView(ll, zoom);
+    if (ll) {
+      const zoom = this.getAttribute("zoom") || 13;
+      map.setView(ll, zoom);
 
-    const title = this.getAttribute("name");
-    if (!title || title.length == 0) {
-      return;
-    }
-    const url = this.getAttribute("url") || getMapLink(ll);
-    const opt = { title };
-    if (icon) {
-      opt.icon = L.icon({
-        iconUrl: icon,
-        iconRetilaUrl: icon,
-        iconSize: [iconsize, iconsize],
-        iconAnchor: [iconsize / 2, iconsize / 2],
-        popupAnchor: [0, -iconsize / 2],
-      });
-    } else if (color) {
-      if (LeafletSprite.colors.indexOf(color) >= 0) {
-        opt.icon = L.spriteIcon(color);
+      const title = this.getAttribute("name");
+      if (title && title.length > 0) {
+        const url = this.getAttribute("url") || getMapLink(ll);
+        const opt = { title };
+        if (icon) {
+          opt.icon = L.icon({
+            iconUrl: icon,
+            iconRetilaUrl: icon,
+            iconSize: [iconsize, iconsize],
+            iconAnchor: [iconsize / 2, iconsize / 2],
+            popupAnchor: [0, -iconsize / 2],
+          });
+        } else if (color) {
+          if (LeafletSprite.colors.indexOf(color) >= 0) {
+            opt.icon = L.spriteIcon(color);
+          }
+        }
+        const marker = L.marker(ll, opt);
+        marker.addTo(map).bindPopup(title ? url ? `<a href=${url}>${title}</a>` : title : "").openPopup();
+        map.scrollWheelZoom.disable();
       }
     }
-    const marker = L.marker(ll, opt);
-    marker.addTo(map).bindPopup(title ? url ? `<a href=${url}>${title}</a>` : title : "").openPopup();
-    map.scrollWheelZoom.disable();
+
+    //
+    //const config = { attributes: true, childList: true, subtree: true };
+    const config = { attributes: true, childList: false, subtree: false };
+    const callback = async (mlist, observer) => {
+      observer.disconnect();
+      await this.init();
+    };
+    const observer = new MutationObserver(callback);
+    observer.observe(this, config);
   }
 }
 
