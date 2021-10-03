@@ -9,8 +9,10 @@ const getMapLink = (ll) => {
 };
 
 class MapView extends HTMLElement {
-  constructor () {
+  constructor (lat, lng) {
     super();
+    this.lat = lat;
+    this.lng = lng;
 
     const grayscale = this.getAttribute("grayscale");
 
@@ -49,8 +51,8 @@ class MapView extends HTMLElement {
         const pos = Geo3x3.decode(geo3x3);
         return [pos.lat, pos.lng];
       }
-      const lat = this.getAttribute("lat");
-      const lng = this.getAttribute("lng");
+      const lat = this.getAttribute("lat") || this.lat;
+      const lng = this.getAttribute("lng") || this.lng;
       if (lat && lng) {
         return [lat, lng];
       }
@@ -101,3 +103,5 @@ class MapView extends HTMLElement {
 }
 
 customElements.define("map-view", MapView);
+
+export { MapView };
