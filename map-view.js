@@ -49,7 +49,9 @@ class MapView extends HTMLElement {
       const geo3x3 = this.getAttribute("geo3x3");
       if (geo3x3) {
         const pos = Geo3x3.decode(geo3x3);
-        return [pos.lat, pos.lng];
+        if (pos) {
+          return [pos.lat, pos.lng];
+        }
       }
       const lat = this.getAttribute("lat") || this.lat;
       const lng = this.getAttribute("lng") || this.lng;
