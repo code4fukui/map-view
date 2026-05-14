@@ -6,7 +6,7 @@ A web component for displaying an interactive map with a marker. It uses Leaflet
 
 ## Demo
 
-View the live demo: **https://code4fukui.github.io/map-view/**
+View the live demo: **https://github.com/code4fukui/map-view
 
 ## Features
 

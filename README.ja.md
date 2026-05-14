@@ -4,7 +4,7 @@
 
 ## デモ
 
-ライブデモはこちら: **https://code4fukui.github.io/map-view/**
+ライブデモはこちら: **https://github.com/code4fukui/map-view
 
 ## 機能
 
